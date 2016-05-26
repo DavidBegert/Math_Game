@@ -1,38 +1,49 @@
 #2 player math game
-@player_1_lives = 3
-@player_2_lives = 3
-@turn = 0
+require 'colorize'
 
 def generate_question
   x = rand(1..20)
   y = rand(1..20)
+
   puts "Player #{@turn % 2 + 1}: What does #{x} + #{y} equal?"
   x + y
 end
 
-# def prompt_player_for_answer
-#   gets.chomp.to_i
-# end
+def output_lives
+  puts "Player 1 is now at #{@player_1_lives} lives.
+Player 2 is now at #{@player_2_lives} lives."
+end
 
 def verify_answer(answer, user_answer)
   if answer == user_answer 
-    puts "CORRECT!!!"
+    puts "CORRECT!!!".green
   else
     if @turn % 2 + 1 == 1
       @player_1_lives -= 1
-      puts "Wrong! Player 1 loses a life. Player 1 is now at #{@player_1_lives} lives."
+      puts "WRONG! Player 1 loses a life.".red
+      output_lives
     else
       @player_2_lives -= 1
-      puts "Wrong! Player 2 loses a life. Player 2 is now at #{@player_2_lives} lives."
+      puts "WRONG! Player 2 loses a life.".red
+      output_lives
     end
   end
 end
 
-while @player_1_lives > 0 && @player_2_lives > 0
-  answer = generate_question
-  user_answer = gets.chomp.to_i
-  verify_answer(answer, user_answer)
-  @turn += 1
+while true
+  @player_1_lives = 3
+  @player_2_lives = 3
+  @turn = 0
+  while @player_1_lives > 0 && @player_2_lives > 0
+    answer = generate_question
+    user_answer = gets.chomp.to_i
+    verify_answer(answer, user_answer)
+    @turn += 1
+  end
+  puts "You Lose!!!!!!!".red
+  puts "Press 1 to challenge him to a rematch! ".yellow
+  play_again = gets.chomp
+  break unless play_again == "1"
 end
 
-puts "You Lose!!!!!!!"
+puts "Bye! Come back to play again!"
