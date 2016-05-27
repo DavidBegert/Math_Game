@@ -93,8 +93,3 @@ while main_game.game_still_going?
   
 end
 main_game.declare_winner
-
-<<<<<<< HEAD
-=======
-puts "Bye! Come back to play again!"
->>>>>>> origin/master
