@@ -4,14 +4,15 @@ require 'colorize'
 def generate_question
   x = rand(1..20)
   y = rand(1..20)
-
-  puts "Player #{@turn % 2 + 1}: What does #{x} + #{y} equal?"
-  x + y
+  syms = [:+, :-, :*, :**, :%]
+  operator = syms.sample
+  puts "Player #{@turn % 2 + 1}: What does #{x} #{operator} #{y} equal?"
+  x.send(operator, y)
 end
 
 def output_lives
-  puts "Player 1 is now at #{@player_1_lives} lives.
-Player 2 is now at #{@player_2_lives} lives."
+  puts "Player 1 lives: #{@player_1_lives}.
+Player 2 lives: #{@player_2_lives}."
 end
 
 def verify_answer(answer, user_answer)
