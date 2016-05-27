@@ -1,50 +1,96 @@
 #2 player math game
 require 'colorize'
+require_relative 'player'
 
-def generate_question
-  x = rand(1..20)
-  y = rand(1..20)
-  syms = [:+, :-, :*, :**, :%]
-  operator = syms.sample
-  puts "Player #{@turn % 2 + 1}: What does #{x} #{operator} #{y} equal?"
-  x.send(operator, y)
-end
+class Game
+  def initialize(players)
+    @num_players = players
+    @turns = 0
+    @players = []  #an array of players
+  end
 
-def output_lives
-  puts "Player 1 lives: #{@player_1_lives}.
-Player 2 lives: #{@player_2_lives}."
-end
+  def create_players
+    @num_players.times do |player|
+      puts "Player #{player + 1}, enter your name: "
+      name = gets.chomp
+      @players << Player.new(name)
+    end
+    puts "Okay perfect, lets get started!"
+  end
 
-def verify_answer(answer, user_answer)
-  if answer == user_answer 
-    puts "CORRECT!!!".green
-  else
-    if @turn % 2 + 1 == 1
-      @player_1_lives -= 1
-      puts "WRONG! Player 1 loses a life.".red
-      output_lives
+  def generate_question
+    x = rand(1..20)
+    y = rand(1..20)
+    syms = [:+, :-, :*, :**, :%]
+    operator = syms.sample
+    puts "#{@players[@turns].name} What does #{x} #{operator} #{y} equal?"
+    x.send(operator, y)
+  end
+
+  def get_answer
+    gets.chomp.to_i
+  end
+
+  def verify_answer(answer, user_answer)
+    if answer == user_answer 
+      puts "CORRECT!!!".green
     else
-      @player_2_lives -= 1
-      puts "WRONG! Player 2 loses a life.".red
-      output_lives
+      puts "WRONG! The correct answer was #{answer}.".red
+      puts "#{@players[@turns].name} loses a life".red
+      @players[@turns].lose_life
     end
   end
-end
 
-while true
-  @player_1_lives = 3
-  @player_2_lives = 3
-  @turn = 0
-  while @player_1_lives > 0 && @player_2_lives > 0
-    answer = generate_question
-    user_answer = gets.chomp.to_i
-    verify_answer(answer, user_answer)
-    @turn += 1
+  def change_turn
+    if @turns >= @players.size - 1 
+      @turns = 0
+    else
+      @turns += 1
+    end
   end
-  puts "You Lose!!!!!!!".red
-  puts "Press 1 to challenge him to a rematch! ".yellow
-  play_again = gets.chomp
-  break unless play_again == "1"
-end
+  def is_dead?
+    unless @players[@turns].alive?
+      puts "#{@players[@turns].name} is dead!".red
+      @turns -= 1
+    end
+  end
 
-puts "Bye! Come back to play again!"
+  def output_lives
+    @players.each do |player|
+      puts "#{player.name} has #{player.lives} lives"
+    end
+  end
+
+  def game_still_going?
+    @players.length > 1
+  end
+
+  def remove_losers
+    @players.select! do |player|
+      player.alive?
+    end
+  end
+
+  def declare_winner
+    puts "#{@players[0].name} is the winner!!!".green
+  end
+
+end #end of class 
+
+print "How many players? "
+num_players = gets.chomp.to_i
+main_game = Game.new(num_players)
+main_game.create_players
+while main_game.game_still_going?
+  answer = main_game.generate_question
+  u_answer = main_game.get_answer
+  main_game.verify_answer(answer, u_answer)
+  main_game.is_dead?
+  main_game.remove_losers
+  main_game.output_lives
+  main_game.change_turn
+  
+  
+end
+main_game.declare_winner
+
