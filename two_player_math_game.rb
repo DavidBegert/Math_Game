@@ -11,6 +11,7 @@ def generate_question
 end
 
 def output_lives
+  puts "WRONG! Player #{@turn % 2 + 1} loses a life. The correct answer was #{answer}".red
   puts "Player 1 lives: #{@player_1_lives}.
 Player 2 lives: #{@player_2_lives}."
 end
@@ -21,11 +22,9 @@ def verify_answer(answer, user_answer)
   else
     if @turn % 2 + 1 == 1
       @player_1_lives -= 1
-      puts "WRONG! Player 1 loses a life.".red
       output_lives
     else
       @player_2_lives -= 1
-      puts "WRONG! Player 2 loses a life.".red
       output_lives
     end
   end
